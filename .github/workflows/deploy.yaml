@@ -1,0 +1,71 @@
+name: Deploy Application
+
+on:
+  workflow_call:
+    secrets:
+      SOPS_AGE_KEY:
+        required: true
+      KUBECONFIG:
+        required: true
+    inputs: 
+      image_url:
+        required: true
+        type: string
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download SOPS
+        if: steps.cache-sops.outputs.cache-hit != 'true'
+        run: |
+          curl -L https://github.com/getsops/sops/releases/download/v3.10.2/sops-v3.10.2.linux.amd64 > sops
+          chmod +x sops
+          mkdir -p $HOME/.local/bin
+          mv sops $HOME/.local/bin/
+
+      - name: Download kustomize
+        if: steps.cache-binaries.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/.local/bin
+          curl -L https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v5.6.0/kustomize_v5.6.0_linux_amd64.tar.gz \
+            | tar xz -C ~/.local/bin
+          chmod +x ~/.local/bin/kustomize
+
+
+      - name: Add SOPS to PATH
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Decrypt secrets
+        run: |
+          export SOPS_AGE_KEY=${{ secrets.SOPS_AGE_KEY }}
+          sops -d deployments/overlays/int/db-credentials.enc.yaml > deployments/overlays/int/db-credentials.dec.yaml
+          sops -d deployments/base/secrets/pg-cert/ca.enc.crt > deployments/base/secrets/pg-cert/ca.dec.crt
+          sops -d deployments/overlays/prod/db-credentials.enc.yaml > deployments/overlays/prod/db-credentials.dec.yaml
+          sops -d deployments/base/pull-secret.enc.yaml > deployments/base/pull-secret.dec.yaml
+
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'  
+
+      - name: Set up kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Deploy to int
+        if: contains(github.ref, 'dev')
+        run: |
+          cd deployments/overlays/int
+          kustomize edit set image ${{ inputs.IMAGE_URL}}
+          kubectl apply -k .
+
+      - name: Deploy to prod
+        if: contains(github.ref, 'main')
+        run: |
+          kubectl apply -k deployments/overlays/prod

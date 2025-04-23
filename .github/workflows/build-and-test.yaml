@@ -1,0 +1,105 @@
+name: Build and Test 
+
+on:
+  workflow_call:
+   inputs: 
+      image_url:
+        required: true
+        type: string
+jobs:
+  backend:
+    name: Build Go Backend
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23' # use your Go version
+          cache: false
+
+      - name: Lint and run tests
+        run: |
+          go vet ./...
+          golangci-lint run ./...
+          go test -v ./...
+        working-directory: internal
+
+      - name: Build backend
+        run: go build -o ./be ./internal/main.go
+        working-directory: ${{ github.workspace }}
+
+      - name: Upload backend binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-binary
+          path: be
+
+  frontend:
+    name: Build Angular Frontend
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: web
+
+      - name: Lint and test
+        run: |
+           export CHROME_BIN=/usr/bin/chromium-browser
+           npm run lint
+           npm run test-ci
+        working-directory: web
+
+      - name: Build frontend int
+        if: contains(github.ref, 'dev')
+        run: npm run build --configuration=int
+        working-directory: web
+
+      - name: Build frontend prod
+        if: contains(github.ref, 'main')
+        run: npm run build --configuration=production
+
+        working-directory: web
+      - name: Upload frontend dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: web/dist/
+
+  build-and-push-image:
+    name: Build and Push Docker Image
+    runs-on: self-hosted
+    needs: [frontend, backend]
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download frontend artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: web/dist  
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-binary
+          path: be
+          
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Build image 
+        run: |
+         docker build -t ${{ inputs.image_url}} .
+         docker push ${{ inputs.image_url }}

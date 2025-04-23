@@ -1,0 +1,49 @@
+name: DB Migration
+run-name: executing db migration
+on: 
+  workflow_dispatch:
+    inputs:
+      migration:
+        description: 'Migrate DB up or down'
+        required: true
+        default: 'up'
+        type: choice
+        options:
+          - up
+          - down
+jobs:
+  migrate: 
+    runs-on: [self-hosted]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up certificate
+        run: |
+          mkdir -p ./certs
+          echo "$DB_SSL_CERTIFICATE" > ca.crt
+          stat ca.crt
+        env: 
+          DB_SSL_CERTIFICATE: ${{ secrets.DB_SSL_CERTIFICATE }}
+
+      - name: Install dbmate
+        run: |
+          curl -fsSL https://github.com/amacneil/dbmate/releases/latest/download/dbmate-linux-amd64 -o dbmate
+          chmod +x dbmate
+          mv dbmate $HOME/.local/bin
+
+      - name: Run dbmate ${{ inputs.action }}
+        if: contains(github.ref, 'dev')
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_INT }}
+        run: |
+          dbmate wait
+          dbmate ${{ inputs.migration}}
+
+      - name: Run dbmate ${{ inputs.action }}
+        if: contains(github.ref, 'main')
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_PROD }}
+        run: |
+          dbmate wait
+          dbmate ${{ inputs.migration}}

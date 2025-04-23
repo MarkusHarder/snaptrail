@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snaptrail-deployment
+  labels:
+    app: snaptrail
+spec:
+  replicas: 3
+  selector:
+    matchLabels:          
+      app: snaptrail    
+  template:               
+    metadata:
+      labels:
+        app: snaptrail
+    spec:
+      containers:
+        - name: snaptrail
+          image: ghcr.io/markusharder/snaptrail:latest 
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: pg-cert
+              mountPath: /certs
+          env:
+            - name: GIN_MODE
+              value: release
+            - name: DEV 
+              value: "false"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: snaptrail-db-secret
+                  key: database.url
+          livenessProbe:
+            httpGet:
+              path: /admin
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          securityContext:
+            runAsUser: 1001
+          ports:
+            - containerPort: 8115
+              name: "web"
+            - containerPort: 8000
+              name: "admin"
+      imagePullSecrets:
+        - name: regcred
+      volumes:
+        - name: pg-cert
+          secret:
+            secretName: TO_REPLACE
+

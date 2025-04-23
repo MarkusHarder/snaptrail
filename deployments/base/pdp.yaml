@@ -1,0 +1,11 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: snaptrail
+  labels:
+    app: snaptrail
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: snaptrail

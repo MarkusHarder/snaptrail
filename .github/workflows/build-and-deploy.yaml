@@ -1,0 +1,54 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  setup-image-url:
+    name: Setup image url 
+    runs-on: self-hosted
+    outputs:
+      image-url: ${{ steps.set-res.outputs.result}}
+    steps:
+      - name: Set LC Envs
+        run: |
+          echo "REPO_LC=${REPO,,}" >>${GITHUB_ENV}
+        env:
+          OWNER: '${{ github.repository_owner }}'
+          REPO: '${{ github.repository}}'
+      - name: Add dev tag
+        id: set-int
+        if: contains(github.ref, 'dev')
+        run: |
+          echo "image_url=ghcr.io/$REPO_LC:${{ github.sha }}" >> "$GITHUB_OUTPUT"
+
+      - name: Add prod tag
+        id: set-prod
+        if: contains(github.ref, 'main')
+        run: |
+          echo "image_url=ghcr.io/$REPO_LC:latest" >> "$GITHUB_OUTPUT"
+
+      - name: Set unified output
+        id: set-res
+        run: |
+          echo "result=${{ steps.set-int.outputs.image_url || steps.set-prod.outputs.image_url}}" >> "$GITHUB_OUTPUT"
+
+  build-and-test:
+    needs: setup-image-url
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/build-and-test.yaml
+    with:
+      image_url: ${{ needs.setup-image-url.outputs.image-url }}
+  deploy:
+    needs: [build-and-test, setup-image-url]
+    uses: ./.github/workflows/deploy.yaml
+    secrets:
+      SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+      KUBECONFIG: ${{ secrets.KUBECONFIG }}
+    with:
+      image_url: ${{ needs.setup-image-url.outputs.image-url }}
