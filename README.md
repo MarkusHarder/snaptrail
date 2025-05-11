@@ -1,6 +1,6 @@
 # Snaptrail
 Snaptrail is a personal passion project. It's goal is to provide a web application to track and share your journey as a photographer.\
-As of now, it is possible for the admin user to create sessions with some basic details describing them, and also uploading one picture for a session - this could be your favorite or most memorable picture.
+As of now, it is possible for the admin user to create sessions with some basic details describing them, and also uploading one picture for a session - this could be your favorite or most memorable picture. Make sure the picture contains EXIF-Data, as the backend will attempt to paritally extract some information to display - if there is none it will cause the session to not be saveable.
 Sessions can be set to public or private - if publically available, they will be visible in a timeline, ordered by date as well as the session list view.
 It features a golang backend, an angular frontend and utilizes a PostgreSQL database.\
 Currently the project is still a prototype. Large commits and breaking changes are to be expected. Test coverage is also less than ideal - will work on that as things stabalize.
