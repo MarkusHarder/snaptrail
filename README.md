@@ -44,7 +44,8 @@ And if using docker compose to setup the database (this should match the DATABAS
   cd web && npm run start
   ```
 And you should be good to go!\
-On startup, the backend will query the database for the username foundin the `ADMIN_USERNAME` ENV. If no record can be found, a user will be created taking into account the provided credentials. These can be used to log in.
+On startup, the backend will query the database for the username foundin the `ADMIN_USERNAME` ENV. If no record can be found, a user will be created taking into account the provided credentials. These can be used to log in.\
+Commits on main or dev trigger corresponding GitHub Actions, executing automated tests, building/pushing a Docker image, decrypt secrets and,if possible, deploy the applicaiton with Kustomize
 
 ## Deployment
 To deploy Snaptrail, some more environment variables are needed:
