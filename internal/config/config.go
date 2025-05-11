@@ -1,6 +1,7 @@
 package config
 
 import (
+	"reflect"
 	"strings"
 
 	"github.com/caarlos0/env/v11"
@@ -27,10 +28,21 @@ func init() {
 	if err := env.Parse(&cfg); err != nil {
 		log.Fatal().Msg("Could not parse config")
 	}
-	cfg.DbUrl = strings.TrimSpace(cfg.DbUrl)
+	trimStringFields(&cfg)
 	config = cfg
 }
 
 func Get() Config {
 	return config
+}
+
+func trimStringFields(cfg *Config) {
+	val := reflect.ValueOf(cfg).Elem()
+	for i := range val.NumField() {
+		field := val.Field(i)
+		if field.Kind() == reflect.String && field.CanSet() {
+			trimmed := strings.TrimSpace(field.String())
+			field.SetString(trimmed)
+		}
+	}
 }
