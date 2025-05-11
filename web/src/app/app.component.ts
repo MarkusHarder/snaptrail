@@ -1,22 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Hello, HelloService } from './services/hello.service';
+import { MenuNavComponent } from './components/menu-nav/menu-nav.component';
+import { CardModule } from 'primeng/card';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, MenuNavComponent, CardModule, ToastModule],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'snaptrail';
-  hello?: Hello
-
-  constructor(private helloS: HelloService) { }
-
-  ngOnInit(): void {
-    this.helloS.getHellos().subscribe(hello => {
-      this.hello = hello
-    })
-  }
 }

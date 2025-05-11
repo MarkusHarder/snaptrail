@@ -15,12 +15,12 @@ services:
       - 8080:8080
     depends_on:
       - db
-  app: 
-    image: ghcr.io/markusharder/snaptrail:latest 
-    ports: 
-      - 80:80
-      - 8115:8115
-    environment:
-      DATABASE_URL: ${DB_DOCKER_URL}
-    depends_on:
-      - db
+  # app: 
+  #   image: ghcr.io/markusharder/snaptrail:latest 
+  #   ports: 
+  #     - 80:80
+  #     - 8115:8115
+  #   environment:
+  #     DATABASE_URL: ${DB_DOCKER_URL}
+  #   depends_on:
+  #     - db

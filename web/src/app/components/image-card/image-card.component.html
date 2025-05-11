@@ -1,0 +1,12 @@
+<div class="bg-white flex justify-center rounded p-4 flex-col">
+  <div class="relative mx-auto">
+    <p-image
+      class="rounded w-full"
+      [src]="thumbnail()!.data"
+      [alt]="thumbnail().filename"
+    />
+  </div>
+  @if (displayDetails()) {
+    <app-thumbnail-detail-display [thumbnail]="thumbnail()" />
+  }
+</div>

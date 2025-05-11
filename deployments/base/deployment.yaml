@@ -24,6 +24,8 @@ spec:
           env:
             - name: GIN_MODE
               value: release
+            - name: DOMAIN_SUFFIX 
+              value: .snaptrail.markusharder.com
             - name: DEV 
               value: "false"
             - name: DATABASE_URL

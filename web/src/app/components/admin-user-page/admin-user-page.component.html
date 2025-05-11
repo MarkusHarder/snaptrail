@@ -1,0 +1,73 @@
+<h2>Change Password</h2>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="flex flex-col sm:flex-col sm:items-center gap-6">
+    <div class="w-64">
+      <p-floatlabel variant="in">
+        <!-- PrimeNg is a bit  buggy here - not full width without the inputStyle -->
+        <p-password
+          [inputStyle]="{ width: '100%' }"
+          [style]="{ width: '100%' }"
+          id="old-password"
+          formControlName="oldPassword"
+          [feedback]="false"
+        />
+        <label for="oldPassword">Old Password</label>
+      </p-floatlabel>
+      @if (hasError("oldPassword", "required")) {
+        <small class="p-error">Old password is required.</small>
+      }
+    </div>
+    <div class="w-64">
+      <p-floatlabel variant="in">
+        <!-- PrimeNg is a bit  buggy here - not full width without the inputStyle -->
+        <p-password
+          [inputStyle]="{ width: '100%' }"
+          [style]="{ width: '100%' }"
+          id="new-password"
+          formControlName="newPassword"
+          [feedback]="false"
+        />
+        @if (hasError("newPassword", "required")) {
+          <p-message severity="error" variant="simple" size="small"
+            >Invalid password*
+          </p-message>
+        }
+        <label for="newPassword">New Password</label>
+      </p-floatlabel>
+    </div>
+    <div class="w-64">
+      <p-floatlabel variant="in">
+        <!-- PrimeNg is a bit  buggy here - not full width without the inputStyle -->
+        <p-password
+          [inputStyle]="{ width: '100%' }"
+          [style]="{ width: '100%' }"
+          id="confirm-password"
+          formControlName="confirmPassword"
+          [feedback]="false"
+        />
+
+        @if (
+          form.hasError("passwordsMismatch") &&
+          form.get("confirmPassword")?.touched
+        ) {
+          <p-message severity="error" variant="simple">
+            Passwords do not match.</p-message
+          >
+        }
+        <label for="confirmPassword">Confirm Password</label>
+      </p-floatlabel>
+    </div>
+    <div class="w-96">
+      @if (
+        hasError("newPassword", "weakPassword") ||
+        hasError("confirmPassword", "weakPasswod")
+      ) {
+        <p-message severity="error" variant="simple"
+          >*Passwords require 8 to 16 characters, at least one capital and small
+          letter, as well as one number and special character.</p-message
+        >
+      }
+    </div>
+    <p-button type="submit" [disabled]="!form.valid">Submit</p-button>
+  </div>
+</form>

@@ -3,9 +3,12 @@ package server
 import (
 	"fmt"
 	"net/http"
+	adminsession "snaptrail/internal/admin-session"
+	"snaptrail/internal/appuser"
 	"snaptrail/internal/config"
-	"snaptrail/internal/hello"
 	"snaptrail/internal/middleware"
+	"snaptrail/internal/session"
+	"snaptrail/internal/thumbnail"
 	"strings"
 	"time"
 
@@ -15,9 +18,12 @@ import (
 )
 
 const (
-	apiPrefix = "/api/v1"
-	helloPath = "/hello"
-	adminPath = "/admin"
+	apiPrefix     = "/api/v1"
+	sessionPath   = "/sessions"
+	adminPath     = "/admin"
+	loginPath     = "/login"
+	thumbnailPath = "/thumbnails"
+	userPath      = "/users"
 )
 
 type Server struct {
@@ -43,8 +49,7 @@ func (s *Server) setupRoutes() {
 	if !config.Get().Dev {
 		apiRouter.Use(cors.New(cors.Config{
 			AllowOriginFunc: func(origin string) bool {
-				//TODO: get suffix from domain
-				return strings.HasSuffix(origin, ".snaptrail.markusharder.com")
+				return strings.HasSuffix(origin, config.Get().DomainSuffix)
 			},
 			AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 			AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
@@ -53,8 +58,28 @@ func (s *Server) setupRoutes() {
 			MaxAge:           12 * time.Hour,
 		}))
 	}
-	helloHandler := hello.New()
-	apiRouter.GET(helloPath, helloHandler.Hello)
+
+	sessionHandler := session.New()
+	apiRouter.GET(sessionPath, sessionHandler.Session)
+
+	userHandler := appuser.New()
+	apiRouter.POST(loginPath, userHandler.Login)
+
+	thumbnailHander := thumbnail.New()
+	apiRouter.GET(sessionPath+"/:sessionID"+thumbnailPath+"/:thumbnailID", thumbnailHander.PublicThumbnailById)
+
+	protectedRouter := s.router.Group(apiPrefix + adminPath)
+	protectedRouter.Use(middleware.JwtAuthMiddleware())
+	adminSessionHandler := adminsession.New()
+	protectedRouter.GET(sessionPath, adminSessionHandler.Session)
+	protectedRouter.POST(sessionPath, adminSessionHandler.CreateOrUpdateSession)
+	protectedRouter.POST(sessionPath+"/:id", adminSessionHandler.CreateOrUpdateSession)
+	protectedRouter.DELETE(sessionPath+"/:id", adminSessionHandler.DeleteSession)
+
+	protectedRouter.GET(sessionPath+"/:sessionID"+thumbnailPath+"/:thumbnailID", thumbnailHander.ThumbnailById)
+
+	protectedRouter.POST(userPath, userHandler.PasswordChange)
+
 	s.router.GET("/ui/*filepath", middleware.StaticUi("/ui", s.uiDir))
 }
 
@@ -76,7 +101,7 @@ func (s *Server) Start() {
 
 	httpMux := http.NewServeMux()
 	httpMux.HandleFunc(adminPath, func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "ok")
+		_, _ = fmt.Fprintln(w, "ok")
 	})
 
 	server := &http.Server{

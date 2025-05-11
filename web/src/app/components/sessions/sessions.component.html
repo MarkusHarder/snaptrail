@@ -1,0 +1,6 @@
+@if (sessions$ | async; as sessions) {
+  <app-sessions-display
+    [sessions]="sessions"
+    [public]="false"
+  ></app-sessions-display>
+}

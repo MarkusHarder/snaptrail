@@ -1,0 +1,29 @@
+<ng-container *ngIf="thumbnail() as thumbnail">
+  <div class="text-black pt-4 flex flex-row justify-start items-center">
+    <div class="flex flex-col min-w-2xs">
+      <div class="font-semibold">
+        ISO{{ thumbnail.iso }} f/{{ thumbnail.aperture | number: "1.1-2" }}
+        {{ thumbnail.exposure }}
+      </div>
+      <div class="text-zinc-400 text-sm">
+        {{ thumbnail.dateTime }}
+      </div>
+    </div>
+
+    <div class="flex flex-row items-center ml-auto pl-12 min-w-xs">
+      <div
+        class="font-bold text-[clamp(0.25rem,5vw,2.5rem)] pr-3 border-r border-zinc-400"
+      >
+        {{ thumbnail.make }}
+      </div>
+      <div class="flex flex-col pl-3">
+        <div class="font-semibold">
+          {{ thumbnail.cameraModel }}
+        </div>
+        <div class="text-zinc-400 text-sm flex flex-row items-center">
+          {{ thumbnail.lensModel }}
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
