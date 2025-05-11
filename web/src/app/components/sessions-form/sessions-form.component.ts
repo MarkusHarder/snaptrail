@@ -1,4 +1,11 @@
-import { Component, inject, Input, model } from '@angular/core';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  inject,
+  Input,
+  model,
+  NO_ERRORS_SCHEMA,
+} from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { DatePickerModule } from 'primeng/datepicker';
 import { InputTextModule } from 'primeng/inputtext';
@@ -34,6 +41,7 @@ import { CommonModule } from '@angular/common';
     ToastModule,
     CommonModule,
   ],
+  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA],
   providers: [MessageService],
   templateUrl: './sessions-form.component.html',
   styleUrl: './sessions-form.component.css',

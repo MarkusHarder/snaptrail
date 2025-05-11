@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MenuNavComponent } from './menu-nav.component';
+import { ActivatedRoute } from '@angular/router';
 
 describe('MenuNavComponent', () => {
   let component: MenuNavComponent;
@@ -8,9 +9,23 @@ describe('MenuNavComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MenuNavComponent]
-    })
-    .compileComponents();
+      imports: [MenuNavComponent],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: () => 'mockValue',
+              },
+              data: {
+                someKey: 'someData',
+              },
+            },
+          },
+        },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(MenuNavComponent);
     component = fixture.componentInstance;
