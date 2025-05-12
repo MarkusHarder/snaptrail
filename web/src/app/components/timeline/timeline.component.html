@@ -35,37 +35,41 @@
   </div>
 </p-dialog>
 @if (sessions$ | async; as sessions) {
-  <div class="card">
-    <p-timeline
-      [value]="sessions"
-      align="alternate"
-      styleClass="customized-timeline"
-    >
-      <ng-template #marker let-event>
-        <span
-          class="flex w-8 h-8 items-center justify-center text-white rounded-full z-10 shadow-sm"
-          [style]="{ 'background-color': event.color }"
-        >
-          <i [class]="event.icon"></i>
-        </span>
-      </ng-template>
-      <ng-template #content let-session>
-        <p-card
-          styleClass="border border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 rounded"
-          [header]="session.sessionName"
-          [subheader]="session.subtitle"
-        >
-          @if (session.id) {
-            @if (session.thumbnail) {
-              <app-image-card [thumbnail]="session.thumbnail" />
+  @if (sessions.length > 0) {
+    <div class="card">
+      <p-timeline
+        [value]="sessions"
+        align="alternate"
+        styleClass="customized-timeline"
+      >
+        <ng-template #marker let-event>
+          <span
+            class="flex w-8 h-8 items-center justify-center text-white rounded-full z-10 shadow-sm"
+            [style]="{ 'background-color': event.color }"
+          >
+            <i [class]="event.icon"></i>
+          </span>
+        </ng-template>
+        <ng-template #content let-session>
+          <p-card
+            styleClass="border border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 rounded"
+            [header]="session.sessionName"
+            [subheader]="session.subtitle"
+          >
+            @if (session.id) {
+              @if (session.thumbnail) {
+                <app-image-card [thumbnail]="session.thumbnail" />
+              }
+              <p>
+                {{ session.date }}
+              </p>
             }
-            <p>
-              {{ session.date }}
-            </p>
-          }
-          <p-button (click)="showDialog(session)" label="Details" />
-        </p-card>
-      </ng-template>
-    </p-timeline>
-  </div>
+            <p-button (click)="showDialog(session)" label="Details" />
+          </p-card>
+        </ng-template>
+      </p-timeline>
+    </div>
+  } @else {
+    <div class="text-xl font-bold">No sessions available!</div>
+  }
 }
