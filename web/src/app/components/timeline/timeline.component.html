@@ -35,6 +35,11 @@
     </div>
   </div>
 </p-dialog>
+
+<div class="flex justify-between items-center min-h-10">
+  <h2>Timeline</h2>
+</div>
+<p-divider />
 @if (sessions$ | async; as sessions) {
   @if (sessions.length > 0) {
     @for (session of sessions; track session.id; let i = $index) {

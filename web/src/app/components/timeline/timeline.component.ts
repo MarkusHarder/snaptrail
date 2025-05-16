@@ -7,6 +7,7 @@ import { Session } from '../../models/session';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { ImageCardComponent } from '../image-card/image-card.component';
 import { DialogModule } from 'primeng/dialog';
+import { DividerModule } from 'primeng/divider';
 
 @Component({
   selector: 'app-timeline',
@@ -17,6 +18,7 @@ import { DialogModule } from 'primeng/dialog';
     ButtonModule,
     ImageCardComponent,
     DialogModule,
+    DividerModule,
   ],
   templateUrl: './timeline.component.html',
 
