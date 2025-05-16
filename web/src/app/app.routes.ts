@@ -7,9 +7,11 @@ import { AdminLayoutComponent } from './components/admin-layout/admin-layout.com
 import { authGuard } from './guards/auth.guard';
 import { PublicSessionsComponent } from './components/public-sessions/public-sessions.component';
 import { AdminUserPageComponent } from './components/admin-user-page/admin-user-page.component';
+import { AboutComponent } from './components/about/about.component';
 
 export const routes: Routes = [
   { path: '', component: LandingPageComponent },
+  { path: 'about', component: AboutComponent },
   {
     path: 'admin',
     component: AdminLayoutComponent,

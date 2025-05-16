@@ -15,6 +15,7 @@ import { Password } from 'primeng/password';
 import { Subscription } from 'rxjs';
 import { AdminService } from '../../services/admin.service';
 import { AuthService } from '../../services/auth.service';
+import { DividerModule } from 'primeng/divider';
 
 @Component({
   selector: 'app-admin-user-page',
@@ -25,6 +26,7 @@ import { AuthService } from '../../services/auth.service';
     Password,
     FloatLabel,
     Message,
+    DividerModule,
   ],
   templateUrl: './admin-user-page.component.html',
   styleUrl: './admin-user-page.component.css',

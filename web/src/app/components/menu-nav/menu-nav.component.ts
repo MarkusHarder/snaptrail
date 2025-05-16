@@ -69,6 +69,11 @@ export class MenuNavComponent implements OnInit, OnDestroy {
           },
         ],
       },
+      {
+        label: 'About',
+        icon: 'pi pi-info-circle',
+        route: '/about',
+      },
     ];
   }
 

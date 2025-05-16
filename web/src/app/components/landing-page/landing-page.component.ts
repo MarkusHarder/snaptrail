@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { CardModule } from 'primeng/card';
+import { RouterModule } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
 import { ImageModule } from 'primeng/image';
 
 @Component({
   selector: 'app-landing-page',
-  imports: [ImageModule, CardModule],
+  imports: [ButtonModule, RouterModule, ImageModule],
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.css',
 })

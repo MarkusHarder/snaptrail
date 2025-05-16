@@ -1,6 +1,10 @@
-<h2>Change Password</h2>
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <div class="flex flex-col sm:flex-col sm:items-center gap-6">
+  <div class="flex justify-between items-center min-h-10">
+    <h2>Change Password</h2>
+  </div>
+
+  <p-divider />
+  <div class="flex flex-col items-center gap-6">
     <div class="w-64">
       <p-floatlabel variant="in">
         <!-- PrimeNg is a bit  buggy here - not full width without the inputStyle -->

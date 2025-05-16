@@ -1,42 +1,32 @@
-<div class="flex flex-row gap-3">
-  <div class="max-w-3/5 pr-10">
-    <div class="flex flex-col justify-between h-7/10">
-      <div>
-        <h1 class="text-4xl font-bold">
-          Capturing journeys, one photo at a time
-        </h1>
-        <br />
-
-        <h2 class="text-3xl font-bold">Why Snaptrail?</h2>
-        <!-- TODO: Rephrase this-->
-        <p class="text-lg">
-          This Webapp servers two purposes: First to document my journey as a
-          photographer. Taking pictures has been a lot of fun for me. Getting
-          out of the house and exploring nature still feels great after a long
-          day in front of the monitor. But going through pictures is a bit
-          tedious, and at times plain boring. The goal of Snaptrail is to have a
-          bit more motivation to do so! It might even showcase improvement over
-          time! Secondly it serves as a technical demo, showcasing my skills and
-          knowledge as a software engineer. skills as a software engineer.
-        </p>
-      </div>
-      <hr />
-      <div>
-        <h2 class="text-3xl font-bold">About</h2>
-        <!-- TODO: Rephrase this-->
-        <p class="text-lg">
-          This Application has been implemented using mostly things I already
-          know - but you always learn something, even when doing something
-          you've done a few times! It consists of a Golang backend, utilizing
-          GIN and GORM as router and ORM respectively. For persistance, I chose
-          PostgreSQL, and Angular with PrimeNG and TailwindCSS on the frontend.
-          For version control and CI/CD I am using Github/Github Actions and
-          Kubernetes. Lastly, the application is running in the Hetzner Cloud.
-        </p>
-      </div>
-    </div>
-  </div>
+<div class="flex flex-col lg:flex-row-reverse">
   <div>
     <p-image src="images/SnaptrailHero.png" alt="Image" styleClass="rounded" />
+  </div>
+  <div class="flex flex-col items-center pt-20 gap-15 lg:gap-35">
+    <div class="text-2xl lg:text-7xl font-bold w-2/3 tracking-wide text-center">
+      Capturing journeys, one photo at a time!
+    </div>
+    <div class="flex flex-col lg:flex-row w-2/3 items-center gap-10">
+      <div class="lg:w-1/5">
+        <p-button
+          severity="contrast"
+          styleClass="w-full text-bold"
+          label="View Timeline"
+        />
+      </div>
+      <div class="text-xl flex flex-col items-center text-center">
+        Want to know more about Snaptrail?
+        <a class="text-xl border-color underline" routerLink="/about"
+          >Click here!</a
+        >
+      </div>
+      <a
+        class="text-xl border-color underline"
+        href="https://github.com/MarkusHarder/snaptrail"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Visit GitHub</a
+      >
+    </div>
   </div>
 </div>

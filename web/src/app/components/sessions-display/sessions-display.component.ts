@@ -7,6 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { SessionsFormComponent } from '../sessions-form/sessions-form.component';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { CardModule } from 'primeng/card';
+import { DividerModule } from 'primeng/divider';
 import { ImageCardComponent } from '../image-card/image-card.component';
 @Component({
   selector: 'app-sessions-display',
@@ -17,6 +18,7 @@ import { ImageCardComponent } from '../image-card/image-card.component';
     ImageCardComponent,
     ConfirmDialog,
     CardModule,
+    DividerModule,
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './sessions-display.component.html',

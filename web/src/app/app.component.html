@@ -1,11 +1,13 @@
 <app-menu-nav></app-menu-nav>
 <main class="main"></main>
 
-<div class="w-full max-w-screen-3xl mx-auto px-6 mt-5">
-  <p-card
-    styleClass="border border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 rounded"
-  >
-    <router-outlet />
-  </p-card>
-</div>
-<p-toast />
+<main class="container mx-auto p-4">
+  <div class="max-w-screen-2xl mx-auto">
+    <p-card
+      styleClass="border border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 rounded"
+    >
+      <router-outlet />
+    </p-card>
+  </div>
+  <p-toast />
+</main>

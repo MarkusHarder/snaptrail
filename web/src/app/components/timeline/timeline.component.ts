@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Timeline } from 'primeng/timeline';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { SessionService } from '../../services/session.service';
 import { Observable } from 'rxjs';
 import { Session } from '../../models/session';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import { ImageCardComponent } from '../image-card/image-card.component';
 import { DialogModule } from 'primeng/dialog';
 
@@ -13,7 +12,7 @@ import { DialogModule } from 'primeng/dialog';
   selector: 'app-timeline',
   imports: [
     AsyncPipe,
-    Timeline,
+    CommonModule,
     CardModule,
     ButtonModule,
     ImageCardComponent,
