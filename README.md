@@ -85,10 +85,10 @@ Since cost is a factor, I don't keep these running at all times. If you are unab
 
 These are my **current** goals for - they are not final in any way and can (most likely will) change
 
+- [ ] Filters
 - [ ] read only User
 - [ ] Simple user management
-- [ ] Hero Section on landing page
-- [ ] Mobile friendly layout
+- [x] Mobile friendly layout
 - [ ] Session Gallery - multiple pictures for one session
 - [ ] Session Ranking
 - [ ] Comments
