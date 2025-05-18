@@ -1,7 +1,7 @@
 # Snaptrail
 
 Snaptrail is a personal passion project. It's goal is to provide a web application to track and share your journey as a photographer.\
-As of now, it is possible for the admin user to create sessions with some basic details describing them, and also uploading one picture for a session - this could be your favorite or most memorable picture.
+As of now, it is possible for the admin user to create sessions with some basic details describing them, and also uploading one picture for a session - this could be your favorite or most memorable picture. The picture must contain EXIF-Data, as the backend will attempt to paritally extract some information to display - if there is none it will cause the session to not be saveable.
 Sessions can be set to public or private - if publically available, they will be visible in a timeline, ordered by date as well as the session list view.
 It features a golang backend, an angular frontend and utilizes a PostgreSQL database.\
 Currently the project is still a prototype. Large commits and breaking changes are to be expected. Test coverage is also less than ideal - will work on that as things stabilize.
@@ -63,7 +63,8 @@ cd web && npm run start
 ```
 
 And you should be good to go!\
-On startup, the backend will query the database for the username found in the `ADMIN_USERNAME` ENV. If no record can be found, a user will be created taking into account the provided credentials. These can be used to log in.
+On startup, the backend will query the database for the username foundin the `ADMIN_USERNAME` ENV. If no record can be found, a user will be created taking into account the provided credentials. These can be used to log in.\
+Commits on main or dev trigger corresponding GitHub Actions, executing automated tests, building/pushing a Docker image, decrypt secrets and,if possible, deploy the applicaiton with Kustomize
 
 ## Deployment
 
