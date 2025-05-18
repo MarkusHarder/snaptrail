@@ -7,7 +7,7 @@ on:
         required: true
       KUBECONFIG:
         required: true
-    inputs: 
+    inputs:
       image_url:
         required: true
         type: string
@@ -34,7 +34,6 @@ jobs:
             | tar xz -C ~/.local/bin
           chmod +x ~/.local/bin/kustomize
 
-
       - name: Add SOPS to PATH
         run: echo "$HOME/.local/bin" >> $GITHUB_PATH
 
@@ -42,15 +41,18 @@ jobs:
         run: |
           export SOPS_AGE_KEY=${{ secrets.SOPS_AGE_KEY }}
           sops -d deployments/overlays/int/db-credentials.enc.yaml > deployments/overlays/int/db-credentials.dec.yaml
+          sops -d deployments/overlays/int/admin-credentials.enc.yaml > deployments/overlays/int/admin-credentials.dec.yaml
+          sops -d deployments/overlays/int/jwt-secret.enc.yaml > deployments/overlays/int/jwt-secret.dec.yaml
           sops -d deployments/base/secrets/pg-cert/ca.enc.crt > deployments/base/secrets/pg-cert/ca.dec.crt
           sops -d deployments/overlays/prod/db-credentials.enc.yaml > deployments/overlays/prod/db-credentials.dec.yaml
+          sops -d deployments/overlays/prod/admin-credentials.enc.yaml > deployments/overlays/prod/admin-credentials.dec.yaml
+          sops -d deployments/overlays/prod/jwt-secret.enc.yaml > deployments/overlays/prod/jwt-secret.dec.yaml
           sops -d deployments/base/pull-secret.enc.yaml > deployments/base/pull-secret.dec.yaml
-
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
         with:
-          version: 'latest'  
+          version: "latest"
 
       - name: Set up kubeconfig
         run: |

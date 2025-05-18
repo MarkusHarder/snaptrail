@@ -1,0 +1,33 @@
+<div class="card">
+  <p-menubar [model]="items">
+    <ng-template #item let-item>
+      <a [routerLink]="item.route" class="p-menubar-item-link">
+        <span [class]="item.icon"></span>
+        <span class="ml-2">{{ item.label }}</span>
+        @if (item.multi) {
+          <span class="pi pi-fw pi-angle-down ml-2"></span>
+        }
+      </a>
+    </ng-template>
+    <div class="flex space-x-5">
+      @if (this.loggedIn) {
+        <p-button
+          [rounded]="true"
+          icon="pi pi-user"
+          [routerLink]="['/admin/user']"
+        ></p-button>
+        <p-button
+          [rounded]="true"
+          icon="pi pi-sign-out"
+          (onClick)="logout()"
+        ></p-button>
+      } @else {
+        <p-button
+          [rounded]="true"
+          icon="pi pi-sign-in"
+          [routerLink]="['/admin/login']"
+        ></p-button>
+      }
+    </div>
+  </p-menubar>
+</div>

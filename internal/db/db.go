@@ -26,7 +26,7 @@ func Close() {
 		log.Error().Err(err).Msg("tried to close non-stablished conenction")
 		return
 	}
-	db.Close()
+	_ = db.Close()
 }
 
 func GetDb() *gorm.DB {

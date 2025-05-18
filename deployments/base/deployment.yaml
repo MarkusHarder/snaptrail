@@ -7,16 +7,16 @@ metadata:
 spec:
   replicas: 3
   selector:
-    matchLabels:          
-      app: snaptrail    
-  template:               
+    matchLabels:
+      app: snaptrail
+  template:
     metadata:
       labels:
         app: snaptrail
     spec:
       containers:
         - name: snaptrail
-          image: ghcr.io/markusharder/snaptrail:latest 
+          image: ghcr.io/markusharder/snaptrail:latest
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: pg-cert
@@ -24,8 +24,25 @@ spec:
           env:
             - name: GIN_MODE
               value: release
-            - name: DEV 
+            - name: DOMAIN_SUFFIX
+              value: .snaptrail.markusharder.com
+            - name: DEV
               value: "false"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: snaptrail-jwt-secret
+                  key: jwt.secret
+            - name: ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: snaptrail-admin-user-secret
+                  key: user.name
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: snaptrail-admin-password-secret
+                  key: user.password
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
@@ -50,4 +67,3 @@ spec:
         - name: pg-cert
           secret:
             secretName: TO_REPLACE
-

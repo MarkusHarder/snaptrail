@@ -5,6 +5,7 @@ import (
 	"snaptrail/internal/config"
 	"snaptrail/internal/db"
 	"snaptrail/internal/server"
+	"snaptrail/internal/setup"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -27,6 +28,11 @@ func main() {
 		return
 	}
 
+	err = setup.CreateAdmin()
+	if err != nil {
+		log.Fatal().Err(err).Msg("unable to retrieve or create admin")
+		return
+	}
 	s := server.New(config.Get().UiDir)
 	s.Start()
 }

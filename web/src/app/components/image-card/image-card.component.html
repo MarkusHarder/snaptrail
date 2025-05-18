@@ -1,0 +1,12 @@
+<div
+  class="w-full max-w-full box-border bg-white flex justify-center rounded p-4 flex-col"
+>
+  <div class="relative mx-auto">
+    <p-image [src]="thumbnail()!.data" [alt]="thumbnail().filename" />
+  </div>
+  @if (displayDetails()) {
+    <div class="m-1">
+      <app-thumbnail-detail-display [thumbnail]="thumbnail()" />
+    </div>
+  }
+</div>
