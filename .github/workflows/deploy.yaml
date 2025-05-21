@@ -48,6 +48,7 @@ jobs:
           sops -d deployments/overlays/prod/admin-credentials.enc.yaml > deployments/overlays/prod/admin-credentials.dec.yaml
           sops -d deployments/overlays/prod/jwt-secret.enc.yaml > deployments/overlays/prod/jwt-secret.dec.yaml
           sops -d deployments/base/pull-secret.enc.yaml > deployments/base/pull-secret.dec.yaml
+          sops -d deployments/base/s3-credentials.enc.yaml > deployments/base/s3-credentials.dec.yaml
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
