@@ -37,8 +37,8 @@ alter table thumbnails rename column thumbnail_uuid to id;
 alter table thumbnails rename column session_uuid to session_id;
 alter table thumbnails rename constraint thumbnails_session_uuid_fkey to thumbnails_session_id_fkey;
 
-
-
+-- populate path column
+UPDATE thumbnails SET path = id || '/' || filename;
 -- migrate:down
 
 -- add uuids to sessions and thumbnails
