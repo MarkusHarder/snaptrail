@@ -10,7 +10,22 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-var client *s3.Client
+var (
+	client        *s3.Client
+	presignClient *s3.PresignClient
+)
+
+type BucketBasics struct {
+	Client        *s3.Client
+	PresignClient *s3.PresignClient
+}
+
+func NewBucketBasics() BucketBasics {
+	return BucketBasics{
+		Client:        client,
+		PresignClient: presignClient,
+	}
+}
 
 func NewS3ClientFromEnv() {
 	conf := config.Get()
@@ -34,10 +49,12 @@ func NewS3ClientFromEnv() {
 			SecretAccessKey: secretKey,
 		}},
 	})
+	presignClient = s3.NewPresignClient(client)
 
 	ctx := context.Background()
 
-	bb := BucketBasics{S3Client: client}
+	bb := BucketBasics{Client: client, PresignClient: presignClient}
+	log.Info().Msgf("Created the following bucket basics: %v", bb)
 
 	exists, err := bb.BucketExists(ctx, bucketName)
 	if err != nil {

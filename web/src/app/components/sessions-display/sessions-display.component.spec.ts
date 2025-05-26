@@ -20,7 +20,7 @@ describe('SessionsDisplayComponent', () => {
     component = fixture.componentInstance;
     const mockSessions: Session[] = [
       {
-        id: 1,
+        id: 'abc-123',
         sessionName: 'Sunset at the Beach',
         subtitle: 'Golden hour by the sea',
         description:
@@ -28,8 +28,9 @@ describe('SessionsDisplayComponent', () => {
         published: true,
         date: new Date('2024-08-01T18:30:00'),
         thumbnail: {
-          id: 101,
+          id: 'abc-101',
           filename: 'sunset_beach.jpg',
+          imageSrc: 'some/path',
           mimeType: 'image/jpeg',
           data: 'base64EncodedData1',
           rawData: new Blob(['image data 1'], { type: 'image/jpeg' }),
@@ -44,15 +45,16 @@ describe('SessionsDisplayComponent', () => {
         },
       },
       {
-        id: 2,
+        id: 'abc-124',
         sessionName: 'Mountain Hike',
         subtitle: 'Morning in the Alps',
         description: 'A fresh early morning hike with misty mountain views.',
         published: false,
         date: new Date('2024-09-15T07:00:00'),
         thumbnail: {
-          id: 102,
+          id: 'abc-102',
           filename: 'alps_morning.jpg',
+          imageSrc: 'some-other/path',
           mimeType: 'image/jpeg',
           data: 'base64EncodedData2',
           rawData: new Blob(['image data 2'], { type: 'image/jpeg' }),

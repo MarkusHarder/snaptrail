@@ -12,26 +12,28 @@ const (
 )
 
 type Session struct {
-	ID          uint64    `gorm:"primaryKey" json:"id"`
-	Thumbnail   Thumbnail `gorm:"foreignKey:SessionID;references:ID" json:"thumbnail"`
-	Name        string    `gorm:"type:text;not null" json:"sessionName"`
-	Subtitle    string    `gorm:"type:text;not null" json:"subtitle"`
-	Description string    `gorm:"type:text;not null" json:"description"`
-	Date        time.Time `gorm:"type:text;not null" json:"date"`
-	Published   bool      `gorm:"type:bool;not null" json:"published"`
-	CreatedAt   time.Time `gorm:"autoCreateTime" json:"created_at"`
-	UpdatedAt   time.Time `gorm:"autoUpdateTime" json:"updated_at"`
+	ID          string     `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
+	Thumbnail   Thumbnail  `gorm:"foreignKey:SessionID;references:ID" json:"thumbnail"`
+	Name        string     `gorm:"type:text;not null" json:"sessionName"`
+	Subtitle    string     `gorm:"type:text;not null" json:"subtitle"`
+	Description string     `gorm:"type:text;not null" json:"description"`
+	Date        time.Time  `gorm:"type:text;not null" json:"date"`
+	Published   bool       `gorm:"type:bool;not null" json:"published"`
+	CreatedAt   *time.Time `gorm:"autoCreateTime;<-:create" json:"created_at"`
+	UpdatedAt   time.Time  `gorm:"autoUpdateTime" json:"updated_at"`
 }
 
 type Thumbnail struct {
-	ID        uint64 `gorm:"primaryKey" json:"id"`
-	SessionID uint64 `json:"sessionId"`
+	ID        string `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
+	SessionID string `json:"sessionId"`
 	Filename  string `gorm:"type:text;not null" json:"filename"`
 	MimeType  string `gorm:"type:text;not null" json:"mimeType"`
 	ExifMetadata
-	Data      []byte    `gorm:"type:bytea;not null" json:"-"`
-	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
-	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
+	Path      string     `gorm:"type:text;not null" json:"path"`
+	Data      []byte     `gorm:"-" json:"data"`
+	ImageSrc  string     `gorm:"-" json:"imageSrc"`
+	CreatedAt *time.Time `gorm:"autoCreateTime;<-:create" json:"created_at"`
+	UpdatedAt time.Time  `gorm:"autoUpdateTime" json:"updated_at"`
 }
 
 type ExifMetadata struct {

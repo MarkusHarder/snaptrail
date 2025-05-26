@@ -54,7 +54,7 @@ export class SessionsFormComponent {
 
   private formBuilder = inject(FormBuilder);
   sessionForm = this.formBuilder.group({
-    id: new FormControl<number | null>({ value: null, disabled: true }),
+    id: new FormControl<string>({ value: '', disabled: true }),
     sessionName: new FormControl('', Validators.required),
     subtitle: new FormControl('', Validators.required),
     description: new FormControl('', Validators.required),
@@ -114,6 +114,7 @@ export class SessionsFormComponent {
         formData,
         this.inputSession?.id,
       );
+      this.inputSession = undefined;
     }
   }
 

@@ -1,16 +1,19 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: snaptrail-deployment 
+  name: snaptrail-deployment
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    traefik.ingress.kubernetes.io/router.middlewares: int-snaptrail-add-ui@kubernetescrd
+    nginx.ingress.kubernetes.io/server-snippet: |
+      if ($request_uri = "/") {
+        return 301 https://$host/ui/;
+      }
 spec:
+  ingressClassName: nginx
   tls:
-    - hosts: 
+    - hosts:
         - int.snaptrail.markusharder.com
-      secretName: letsencrypt-traefik-cert
+      secretName: letsencrypt-cert
   rules:
     - host: int.snaptrail.markusharder.com
       http:
@@ -22,4 +25,3 @@ spec:
                 name: snaptrail-service
                 port:
                   number: 80
-

@@ -89,7 +89,7 @@ func findTag(ifd *exif.Ifd, tagName string) (*exif.IfdTagEntry, error) {
 }
 
 func parseAndAssignTagValue(md *structs.ExifMetadata, rawValue any, target string) error {
-	log.Info().Msgf("going for target: %s\n", target)
+	log.Info().Msgf("going for target: %s ", target)
 	switch target {
 	case "CameraModel":
 		s, ok := rawValue.(string)
@@ -97,7 +97,7 @@ func parseAndAssignTagValue(md *structs.ExifMetadata, rawValue any, target strin
 			return fmt.Errorf("unable to parse CameraModel as string")
 		}
 		md.CameraModel = s
-		log.Info().Msgf("assigned %s to %s\n", s, target)
+		log.Info().Msgf("assigned %s to %s ", s, target)
 		return nil
 	case "Make":
 		s, ok := rawValue.(string)
@@ -105,7 +105,7 @@ func parseAndAssignTagValue(md *structs.ExifMetadata, rawValue any, target strin
 			return fmt.Errorf("unable to parse Make as string")
 		}
 		md.Make = s
-		log.Info().Msgf("assigned %s to %s\n", s, target)
+		log.Info().Msgf("assigned %s to %s ", s, target)
 		return nil
 	case "DateTime":
 		s, ok := rawValue.(string)
@@ -113,13 +113,13 @@ func parseAndAssignTagValue(md *structs.ExifMetadata, rawValue any, target strin
 			return fmt.Errorf("unable to parse DateTime as string")
 		}
 		md.DateTime = s
-		log.Info().Msgf("assigned %s to %s\n", s, target)
+		log.Info().Msgf("assigned %s to %s", s, target)
 		return nil
 	case "Aperture":
 		switch v := rawValue.(type) {
 		case exif.Rational:
 			md.Aperture = rationalToFloat(v)
-			log.Info().Msgf("assigned %f to %s\n", md.Aperture, target)
+			log.Info().Msgf("assigned %f to %s", md.Aperture, target)
 			return nil
 		case []exif.Rational:
 			md.Aperture = rationalSliceToFloat(v)
@@ -133,13 +133,13 @@ func parseAndAssignTagValue(md *structs.ExifMetadata, rawValue any, target strin
 			return fmt.Errorf("unable to parse ISOSPeedRatings as int")
 		}
 		md.ISO = num
-		log.Info().Msgf("assigned %d to %s\n", num, target)
+		log.Info().Msgf("assigned %d to %s", num, target)
 		return nil
 	case "FocalLength":
 		switch v := rawValue.(type) {
 		case exif.Rational:
 			md.FocalLength = rationalToFloat(v)
-			log.Info().Msgf("assigned %f to %s\n", md.FocalLength, target)
+			log.Info().Msgf("assigned %f to %s", md.FocalLength, target)
 			return nil
 		case []exif.Rational:
 			md.FocalLength = rationalSliceToFloat(v)
@@ -151,7 +151,7 @@ func parseAndAssignTagValue(md *structs.ExifMetadata, rawValue any, target strin
 		switch v := rawValue.(type) {
 		case exif.Rational:
 			md.Exposure = rationalToString(v)
-			log.Info().Msgf("assigned %s to %s\n", md.Exposure, target)
+			log.Info().Msgf("assigned %s to %s", md.Exposure, target)
 			return nil
 		case []exif.Rational:
 			md.Exposure = rationalSliceToString(v)
@@ -165,7 +165,7 @@ func parseAndAssignTagValue(md *structs.ExifMetadata, rawValue any, target strin
 			return fmt.Errorf("unable to parse Lens as string")
 		}
 		md.LensModel = s
-		log.Info().Msgf("assigned %s to %s\n", s, target)
+		log.Info().Msgf("assigned %s to %s", s, target)
 	}
 	return nil
 }

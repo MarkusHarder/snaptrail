@@ -1,5 +1,5 @@
 export interface Session {
-  id?: number;
+  id?: string;
   thumbnail?: Thumbnail;
   sessionName?: string;
   subtitle?: string;
@@ -9,11 +9,12 @@ export interface Session {
 }
 
 export interface Thumbnail {
-  id?: number;
+  id?: string;
   filename: string;
   mimeType: string;
   data: string;
   rawData: Blob;
+  imageSrc: string;
   cameraModel?: string;
   make?: string;
   lensModel?: string;

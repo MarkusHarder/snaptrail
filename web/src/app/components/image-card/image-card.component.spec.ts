@@ -15,11 +15,12 @@ describe('ImageCardComponent', () => {
     fixture = TestBed.createComponent(ImageCardComponent);
     component = fixture.componentInstance;
     const t = {
-      id: 123,
+      id: 'abc-123',
       filename: 'image123.jpg',
       mimeType: 'image/jpeg',
       data: 'base64EncodedImageData',
-      rawData: new Blob(['test image data'], { type: 'image/jpeg' }),
+      rawData: new Blob(['test image data'], { type: 'image/png' }),
+      imageSrc: 'some/image/url/img.png',
       cameraModel: 'Canon EOS 5D Mark IV',
       make: 'Canon',
       lensModel: 'Canon EF 24-70mm f/2.8L II USM',
