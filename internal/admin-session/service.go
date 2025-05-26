@@ -160,7 +160,7 @@ func (s svc) deleteSession(id string) (err error) {
 
 	err = s.bucket.DeleteObjects(context.Background(), config.Get().S3Bucket, []string{session.Thumbnail.Path})
 	if err != nil {
-		return
+		log.Warn().Err(err).Msg("failed to delete image from bucket")
 	}
 
 	return s.repo.deleteSession(id)
