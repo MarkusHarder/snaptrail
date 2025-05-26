@@ -51,12 +51,12 @@ func (s svc) GetSessions(public bool) (sessions []structs.Session, err error) {
 	}
 
 	for i, sess := range sessions {
-		req, err := s.bucket.GetObject(context.Background(), config.Get().S3Bucket, sess.Thumbnail.Path, validSeconds)
+		url, err := s.bucket.GetObject(context.Background(), config.Get().S3Bucket, sess.Thumbnail.Path, validSeconds)
 		if err != nil {
 			log.Err(err).Msgf("failed to get presigned url for session: %s with thumbnnail:%s", sess.Name, sess.Thumbnail.Filename)
 		}
 
-		sessions[i].Thumbnail.ImageSrc = req.URL
+		sessions[i].Thumbnail.ImageSrc = url
 	}
 
 	return

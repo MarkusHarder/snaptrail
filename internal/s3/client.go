@@ -30,6 +30,7 @@ func NewBucketBasics() BucketBasics {
 func NewS3ClientFromEnv() {
 	conf := config.Get()
 	endpoint := conf.S3Endpoint
+	publicHost := "https://" + conf.S3PublicHost
 	// pathStyle := conf.S3PathStyle
 	pathStyle := true
 	region := conf.S3Region
@@ -49,7 +50,20 @@ func NewS3ClientFromEnv() {
 			SecretAccessKey: secretKey,
 		}},
 	})
-	presignClient = s3.NewPresignClient(client)
+
+	externalClient := s3.New(s3.Options{
+		AppID: "my-application/0.0.1",
+
+		Region:       region,
+		BaseEndpoint: aws.String(publicHost),
+		UsePathStyle: pathStyle,
+
+		Credentials: credentials.StaticCredentialsProvider{Value: aws.Credentials{
+			AccessKeyID:     accessKey,
+			SecretAccessKey: secretKey,
+		}},
+	})
+	presignClient = s3.NewPresignClient(externalClient)
 
 	ctx := context.Background()
 

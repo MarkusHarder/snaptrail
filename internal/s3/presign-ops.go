@@ -2,10 +2,11 @@ package s3
 
 import (
 	"context"
+	"net/url"
+	"snaptrail/internal/config"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	v4 "github.com/aws/aws-sdk-go-v2/aws/signer/v4"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/rs/zerolog/log"
 )
@@ -14,7 +15,7 @@ import (
 // The presigned request is valid for the specified number of seconds.
 func (presigner BucketBasics) GetObject(
 	ctx context.Context, bucketName string, objectKey string, lifetimeSecs int64,
-) (*v4.PresignedHTTPRequest, error) {
+) (string, error) {
 	request, err := presigner.PresignClient.PresignGetObject(ctx, &s3.GetObjectInput{
 		Bucket: aws.String(bucketName),
 		Key:    aws.String(objectKey),
@@ -25,5 +26,17 @@ func (presigner BucketBasics) GetObject(
 		log.Info().Msgf("Couldn't get a presigned request to get %v:%v. Here's why: %v\n",
 			bucketName, objectKey, err)
 	}
-	return request, err
+
+	return replacePresignedUrl(request.URL)
+}
+
+func replacePresignedUrl(signedURL string) (string, error) {
+	u, err := url.Parse(signedURL)
+	if err != nil {
+		return "", nil
+	}
+
+	u.Scheme = "https"
+	u.Host = config.Get().S3PublicHost
+	return u.String(), nil
 }

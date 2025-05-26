@@ -5,4 +5,5 @@ metadata:
 data:
   S3_BUCKET: "int-snaptrail"
   S3_ENDPOINT: "http://minio.minio-tenant.svc.cluster.local"
+  S3_PUBLIC_HOST: "minio.markusharder.com"
   S3_REGION: "minio"
