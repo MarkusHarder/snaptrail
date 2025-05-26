@@ -4,14 +4,13 @@ metadata:
   name: snaptrail-deployment
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt
-    nginx.ingress.kubernetes.io/rewrite-target: /ui/
-    nginx.ingress.kubernetes.io/use-regex: "true"
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.middlewares: int-snaptrail-add-ui@kubernetescrd
 spec:
-  ingressClassName: nginx
   tls:
     - hosts:
         - int.snaptrail.markusharder.com
-      secretName: letsencrypt-cert
+      secretName: letsencrypt-traefik-cert
   rules:
     - host: int.snaptrail.markusharder.com
       http:

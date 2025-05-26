@@ -6,6 +6,7 @@ resources:
   - ../../base
   - ingress.yaml
   - namespace.yaml
+  - middleware.yaml
   - db-credentials.dec.yaml
   - admin-credentials.dec.yaml
   - jwt-secret.dec.yaml
