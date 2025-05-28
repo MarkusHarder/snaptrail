@@ -59,7 +59,7 @@ jobs:
         working-directory: web
 
       - name: Build frontend int
-        if: contains(github.ref, 'dev')
+        if: github.ref == 'refs/heads/dev' || (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'dev')
         run: npm run build --configuration=int
         working-directory: web
 
