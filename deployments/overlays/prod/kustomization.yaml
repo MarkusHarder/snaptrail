@@ -11,5 +11,8 @@ resources:
   - admin-credentials.dec.yaml
   - jwt-secret.dec.yaml
 
-patchesStrategicMerge:
-  - s3-env.yaml
+patches:
+  - path: s3-env-patch.yaml
+    target:
+      kind: ConfigMap
+      name: s3-config
