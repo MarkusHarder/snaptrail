@@ -4,6 +4,7 @@ import (
 	"os"
 	"snaptrail/internal/config"
 	"snaptrail/internal/db"
+	"snaptrail/internal/s3"
 	"snaptrail/internal/server"
 	"snaptrail/internal/setup"
 
@@ -21,6 +22,8 @@ func main() {
 	} else {
 		zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	}
+
+	s3.NewS3ClientFromEnv()
 
 	err := db.Connect(config.Get().DbUrl)
 	if err != nil {

@@ -1,10 +1,15 @@
 # Snaptrail
 
 Snaptrail is a personal passion project. It's goal is to provide a web application to track and share your journey as a photographer.\
-As of now, it is possible for the admin user to create sessions with some basic details describing them, and also uploading one picture for a session - this could be your favorite or most memorable picture. The picture must contain EXIF-Data, as the backend will attempt to paritally extract some information to display - if there is none it will cause the session to not be saveable.
+As of now, it is possible for the admin user to create sessions with some basic details describing them, and also uploading one picture for a session - this could be your favorite or most memorable picture. The picture must contain EXIF-Data, as the backend will attempt to paritally extract some information to display - if there is none it will cause the session to not be saved.
 Sessions can be set to public or private - if publically available, they will be visible in a timeline, ordered by date as well as the session list view.
 It features a golang backend, an angular frontend and utilizes a PostgreSQL database.\
 Currently the project is still a prototype. Large commits and breaking changes are to be expected. Test coverage is also less than ideal - will work on that as things stabilize.
+
+## Environments
+
+Want to take a look at the progress?
+[INT](https://int.snaptrail.markusharder.com/ui/)(can break at times) and [PROD](https://snaptrail.markusharder.com/ui/)
 
 ## DISCLAIMER
 
@@ -87,7 +92,7 @@ Since cost is a factor, I don't keep these running at all times. If you are unab
 These are my **current** goals for - they are not final in any way and can (most likely will) change
 
 - [ ] Filters
-- [ ] read only User
+- [ ] Viewer/Editor roles
 - [ ] Simple user management
 - [x] Mobile friendly layout
 - [ ] Session Gallery - multiple pictures for one session

@@ -8,7 +8,6 @@ import (
 	"snaptrail/internal/config"
 	"snaptrail/internal/middleware"
 	"snaptrail/internal/session"
-	"snaptrail/internal/thumbnail"
 	"strings"
 	"time"
 
@@ -65,18 +64,14 @@ func (s *Server) setupRoutes() {
 	userHandler := appuser.New()
 	apiRouter.POST(loginPath, userHandler.Login)
 
-	thumbnailHander := thumbnail.New()
-	apiRouter.GET(sessionPath+"/:sessionID"+thumbnailPath+"/:thumbnailID", thumbnailHander.PublicThumbnailById)
-
 	protectedRouter := s.router.Group(apiPrefix + adminPath)
 	protectedRouter.Use(middleware.JwtAuthMiddleware())
+
 	adminSessionHandler := adminsession.New()
 	protectedRouter.GET(sessionPath, adminSessionHandler.Session)
 	protectedRouter.POST(sessionPath, adminSessionHandler.CreateOrUpdateSession)
 	protectedRouter.POST(sessionPath+"/:id", adminSessionHandler.CreateOrUpdateSession)
 	protectedRouter.DELETE(sessionPath+"/:id", adminSessionHandler.DeleteSession)
-
-	protectedRouter.GET(sessionPath+"/:sessionID"+thumbnailPath+"/:thumbnailID", thumbnailHander.ThumbnailById)
 
 	protectedRouter.POST(userPath, userHandler.PasswordChange)
 

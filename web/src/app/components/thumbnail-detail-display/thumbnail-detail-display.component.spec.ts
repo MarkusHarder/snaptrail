@@ -17,7 +17,7 @@ describe('ThumbnailDetailDisplayComponent', () => {
     fixture = TestBed.createComponent(ThumbnailDetailDisplayComponent);
     component = fixture.componentInstance;
     const t = {
-      id: 123,
+      id: 'abc-123',
       filename: 'image123.jpg',
       mimeType: 'image/jpeg',
       data: 'base64EncodedImageData',

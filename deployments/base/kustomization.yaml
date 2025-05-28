@@ -6,11 +6,13 @@ resources:
   - svc.yaml
   - pdp.yaml
   - pull-secret.dec.yaml
+  - s3-credentials.dec.yaml
+  - s3-env.yaml
 
 secretGenerator:
   - name: pg-cert
     files:
-    - ./secrets/pg-cert/ca.dec.crt
+      - ./secrets/pg-cert/ca.dec.crt
     type: Opaque
 
 replacements:

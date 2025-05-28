@@ -19,6 +19,12 @@ type Config struct {
 	JwtSecret     string `env:"JWT_SECRET,required"`
 	AdminUsername string `env:"ADMIN_USERNAME,required"`
 	AdminPassword string `env:"ADMIN_PASSWORD,required"`
+	S3Endpoint    string `env:"S3_ENDPOINT,required"`
+	S3Bucket      string `env:"S3_BUCKET,required"`
+	S3BasePath    string `env:"S3_BASE_PATH"`
+	S3Region      string `env:"S3_REGION"`
+	S3AccessKey   string `env:"S3_ACCESS_KEY,required"`
+	S3SecretKey   string `env:"S3_SECRET_KEY,required"`
 }
 
 var config Config

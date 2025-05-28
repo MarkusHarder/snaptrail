@@ -4,7 +4,6 @@ import (
 	"context"
 	"net/http"
 	"snaptrail/internal/structs"
-	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -37,10 +36,12 @@ func (h *Handler) Session(c *gin.Context) {
 }
 
 func (h *Handler) CreateOrUpdateSession(c *gin.Context) {
-	idParam := c.Param("id")
-	id, err := strconv.ParseUint(idParam, 10, 0)
-	if err != nil {
-		log.Err(err).Msg("failed to parse session id update, creating session instead")
+	id := c.Param("id")
+	update := true
+	log.Info().Msgf("creating or updating session, got id: %s, will update: %t", id, update)
+	if id == "" {
+		update = false
+		log.Warn().Msg("failed to parse session id update, creating session instead")
 	}
 
 	var form sessionForm
@@ -73,19 +74,26 @@ func (h *Handler) CreateOrUpdateSession(c *gin.Context) {
 		Published:   form.Published,
 	}
 	session.ID = id
-	if err := h.svc.createOrUpdateSession(&session, uploadedThumbnail); err != nil {
-		log.Err(err).Msg("failed to create or update session")
-		c.String(http.StatusInternalServerError, "failed to create or update session")
-		return
+	if update {
+		if err := h.svc.updateSession(&session, uploadedThumbnail); err != nil {
+			log.Err(err).Msg("failed to create or update session")
+			c.String(http.StatusInternalServerError, "failed to create or update session")
+			return
+		}
+	} else {
+		if err := h.svc.createSession(&session, uploadedThumbnail); err != nil {
+			log.Err(err).Msg("failed to create or update session")
+			c.String(http.StatusInternalServerError, "failed to create or update session")
+			return
+		}
 	}
 	c.JSON(http.StatusOK, session)
 }
 
 func (h *Handler) DeleteSession(c *gin.Context) {
-	idParam := c.Param("id")
-	id, err := strconv.ParseUint(idParam, 10, 0)
-	if err != nil {
-		log.Err(err).Msg("failed to parse session id to delete")
+	id := c.Param("id")
+	if id == "" {
+		log.Error().Msg("failed to parse session id to delete")
 		c.JSON(http.StatusBadRequest, "failed to parse session id to delete")
 		return
 	}

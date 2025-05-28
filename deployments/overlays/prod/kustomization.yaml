@@ -10,3 +10,9 @@ resources:
   - db-credentials.dec.yaml
   - admin-credentials.dec.yaml
   - jwt-secret.dec.yaml
+
+patches:
+  - path: s3-env-patch.yaml
+    target:
+      kind: ConfigMap
+      name: s3-config

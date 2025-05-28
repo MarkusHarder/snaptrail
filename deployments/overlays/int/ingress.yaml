@@ -1,14 +1,14 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: snaptrail-deployment 
+  name: snaptrail-deployment
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.middlewares: int-snaptrail-add-ui@kubernetescrd
 spec:
   tls:
-    - hosts: 
+    - hosts:
         - int.snaptrail.markusharder.com
       secretName: letsencrypt-traefik-cert
   rules:
@@ -22,4 +22,3 @@ spec:
                 name: snaptrail-service
                 port:
                   number: 80
-

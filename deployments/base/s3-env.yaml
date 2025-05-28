@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: s3-config
+data:
+  S3_BUCKET: "snaptrail"
+  S3_BASE_PATH: "int"
+  S3_ENDPOINT: "https://hel1.your-objectstorage.com"
+  S3_REGION: "minio"

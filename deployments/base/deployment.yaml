@@ -48,6 +48,19 @@ spec:
                 secretKeyRef:
                   name: snaptrail-db-secret
                   key: database.url
+            - name: S3_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: storage-user
+                  key: s3.access_key
+            - name: S3_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: storage-user
+                  key: s3.secret_key
+          envFrom:
+            - configMapRef:
+                name: s3-config
           livenessProbe:
             httpGet:
               path: /admin
