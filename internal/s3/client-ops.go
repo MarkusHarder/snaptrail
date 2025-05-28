@@ -125,18 +125,17 @@ func (basics BucketBasics) UploadFile(ctx context.Context, bucketName string, th
 
 // DownloadFile gets an object from a bucket and stores it in a local file.
 func (basics BucketBasics) DownloadFile(ctx context.Context, bucketName string, thumbnail *structs.Thumbnail) error {
-	key := fmt.Sprintf("%s/%s", thumbnail.ID, thumbnail.Filename)
 	result, err := basics.Client.GetObject(ctx, &s3.GetObjectInput{
 		Bucket: aws.String(bucketName),
-		Key:    aws.String(key),
+		Key:    aws.String(thumbnail.Path),
 	})
 	if err != nil {
 		var noKey *types.NoSuchKey
 		if errors.As(err, &noKey) {
-			log.Info().Msgf("Can't get object %s from bucket %s. No such key exists.\n", key, bucketName)
+			log.Info().Msgf("Can't get object %s from bucket %s. No such key exists.\n", thumbnail.Path, bucketName)
 			err = noKey
 		} else {
-			log.Info().Msgf("Couldn't get object %v:%v. Here's why: %v\n", bucketName, key, err)
+			log.Info().Msgf("Couldn't get object %v:%v. Here's why: %v\n", bucketName, thumbnail.Path, err)
 		}
 		return err
 	}
@@ -148,7 +147,7 @@ func (basics BucketBasics) DownloadFile(ctx context.Context, bucketName string, 
 
 	body, err := io.ReadAll(result.Body)
 	if err != nil {
-		log.Info().Msgf("Couldn't read object body from %v. Here's why: %v\n", key, err)
+		log.Info().Msgf("Couldn't read object body from %v. Here's why: %v\n", thumbnail.Path, err)
 	}
 	thumbnail.Data = body
 

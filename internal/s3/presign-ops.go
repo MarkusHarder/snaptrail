@@ -2,8 +2,6 @@ package s3
 
 import (
 	"context"
-	"net/url"
-	"snaptrail/internal/config"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -27,16 +25,5 @@ func (presigner BucketBasics) GetObject(
 			bucketName, objectKey, err)
 	}
 
-	return replacePresignedUrl(request.URL)
-}
-
-func replacePresignedUrl(signedURL string) (string, error) {
-	u, err := url.Parse(signedURL)
-	if err != nil {
-		return "", nil
-	}
-
-	u.Scheme = "https"
-	u.Host = config.Get().S3PublicHost
-	return u.String(), nil
+	return request.URL, nil
 }

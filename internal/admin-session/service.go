@@ -31,17 +31,19 @@ type Service interface {
 
 func NewService(ctx context.Context) Service {
 	return svc{
-		ctx:    ctx,
-		repo:   newRepo(ctx),
-		bucket: s3.NewBucketBasics(),
+		ctx:            ctx,
+		repo:           newRepo(ctx),
+		bucket:         s3.NewBucketBasics(),
+		bucketBasePath: config.Get().S3BasePath,
 	}
 }
 
 type svc struct {
-	ctx    context.Context
-	repo   repository
-	txRepo repository
-	bucket s3.BucketBasics
+	ctx            context.Context
+	repo           repository
+	txRepo         repository
+	bucket         s3.BucketBasics
+	bucketBasePath string
 }
 
 func (s svc) GetSessions(public bool) (sessions []structs.Session, err error) {
@@ -114,7 +116,7 @@ func (s svc) updateSession(session *structs.Session, img *multipart.FileHeader) 
 	oldKey := oldSession.Thumbnail.Path
 	thumbnail.ID = oldSession.Thumbnail.ID
 	thumbnail.SessionID = session.ID
-	thumbnail.Path = fmt.Sprintf("%s/%s", thumbnail.ID, thumbnail.Filename)
+	thumbnail.Path = fmt.Sprintf("%s/%s/%s", s.bucketBasePath, thumbnail.ID, thumbnail.Filename)
 
 	tx := db.GetDb().Begin()
 	txRepo := s.getTxRepo(tx)
