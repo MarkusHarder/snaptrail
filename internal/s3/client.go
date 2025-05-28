@@ -31,7 +31,6 @@ func NewS3ClientFromEnv() {
 	conf := config.Get()
 	endpoint := conf.S3Endpoint
 	publicHost := "https://" + conf.S3PublicHost
-	// pathStyle := conf.S3PathStyle
 	pathStyle := true
 	region := conf.S3Region
 	accessKey := conf.S3AccessKey
