@@ -8,7 +8,7 @@ on:
 
 jobs:
   setup-image-url:
-    name: Setup image url 
+    name: Setup image url
     runs-on: self-hosted
     outputs:
       image-url: ${{ steps.set-res.outputs.result}}
@@ -17,11 +17,11 @@ jobs:
         run: |
           echo "REPO_LC=${REPO,,}" >>${GITHUB_ENV}
         env:
-          OWNER: '${{ github.repository_owner }}'
-          REPO: '${{ github.repository}}'
+          OWNER: "${{ github.repository_owner }}"
+          REPO: "${{ github.repository}}"
       - name: Add dev tag
         id: set-int
-        if: contains(github.ref, 'dev')
+        if: ${{ (github.event_name == 'push' && github.base_ref == 'dev') || (github.event_name == 'pull_request' && github.head_ref == 'dev') }}
         run: |
           echo "image_url=ghcr.io/$REPO_LC:${{ github.sha }}" >> "$GITHUB_OUTPUT"
 
