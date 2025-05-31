@@ -71,4 +71,6 @@ jobs:
       - name: Deploy to prod
         if: contains(github.ref, 'main')
         run: |
-          kubectl apply -k deployments/overlays/prod
+          cd deployments/overlays/prod
+          kustomize edit set image ${{ inputs.IMAGE_URL}}
+          kubectl apply -k .
