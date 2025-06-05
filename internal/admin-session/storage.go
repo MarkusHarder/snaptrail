@@ -11,7 +11,8 @@ import (
 type repository interface {
 	getSessions(public bool) (sessions []structs.Session, err error)
 	getSessionById(id string) (session structs.Session, err error)
-	createOrUpdateSession(session *structs.Session) (err error)
+	createSession(session *structs.Session) (err error)
+	updateSession(session *structs.Session) (err error)
 	createOrUpdateThumbnail(img *structs.Thumbnail) (err error)
 	deleteSession(id string) (err error)
 }
@@ -44,8 +45,13 @@ func (r repo) getSessionById(id string) (session structs.Session, err error) {
 	return
 }
 
-func (r repo) createOrUpdateSession(session *structs.Session) (err error) {
+func (r repo) createSession(session *structs.Session) (err error) {
 	err = r.db.Save(&session).Error
+	return
+}
+
+func (r repo) updateSession(session *structs.Session) (err error) {
+	err = r.db.Model(&session).Updates(&session).Error
 	return
 }
 

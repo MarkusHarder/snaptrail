@@ -13,7 +13,7 @@ const (
 
 type Session struct {
 	ID          string     `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
-	Thumbnail   Thumbnail  `gorm:"foreignKey:SessionID;references:ID" json:"thumbnail"`
+	Thumbnail   *Thumbnail `gorm:"foreignKey:SessionID;references:ID" json:"thumbnail"`
 	Name        string     `gorm:"type:text;not null" json:"sessionName"`
 	Subtitle    string     `gorm:"type:text;not null" json:"subtitle"`
 	Description string     `gorm:"type:text;not null" json:"description"`
@@ -30,7 +30,7 @@ type Thumbnail struct {
 	MimeType  string `gorm:"type:text;not null" json:"mimeType"`
 	ExifMetadata
 	Path      string     `gorm:"type:text;not null" json:"path"`
-	Data      []byte     `gorm:"-" json:"data"`
+	Data      []byte     `gorm:"-" json:"-"`
 	ImageSrc  string     `gorm:"-" json:"imageSrc"`
 	CreatedAt *time.Time `gorm:"autoCreateTime;<-:create" json:"created_at"`
 	UpdatedAt time.Time  `gorm:"autoUpdateTime" json:"updated_at"`

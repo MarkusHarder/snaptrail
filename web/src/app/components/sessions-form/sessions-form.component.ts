@@ -66,24 +66,25 @@ export class SessionsFormComponent {
   @Input()
   set selectedSession(session: Session | undefined) {
     this.inputSession = session;
-    let d;
-    const f = session?.thumbnail
-      ? new File([session.thumbnail!.rawData], session?.thumbnail?.filename, {
-          type: session?.thumbnail?.mimeType,
-        })
-      : undefined;
-    this.uploadedFile = f ?? null;
-    this.filename = this.inputSession?.thumbnail?.filename ?? '';
-    if (session?.date) d = new Date(session?.date);
-    this.sessionForm.patchValue({
-      id: session?.id,
-      sessionName: session?.sessionName ?? '',
-      subtitle: session?.subtitle ?? '',
-      description: session?.description ?? '',
-      uploadedThumbnail: f,
-      published: session?.published,
-      date: d,
-    });
+    if (session) {
+      this.sessionForm.get('uploadedThumbnail')?.clearValidators();
+      let d;
+      this.filename = this.inputSession?.thumbnail?.filename ?? '';
+      if (session?.date) d = new Date(session?.date);
+      this.sessionForm.patchValue({
+        id: session?.id,
+        sessionName: session?.sessionName ?? '',
+        subtitle: session?.subtitle ?? '',
+        description: session?.description ?? '',
+        published: session?.published,
+        date: d,
+      });
+    } else {
+      this.sessionForm.reset();
+      this.sessionForm
+        .get('uploadedThumbnail')
+        ?.setValidators(Validators.required);
+    }
   }
 
   constructor(
@@ -132,5 +133,9 @@ export class SessionsFormComponent {
         detail: '',
       });
     }
+  }
+
+  hideDialog() {
+    this.selectedSession = undefined;
   }
 }

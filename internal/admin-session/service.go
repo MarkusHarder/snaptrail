@@ -2,6 +2,7 @@ package adminsession
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -18,6 +19,8 @@ import (
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 )
+
+var ErrImageNotProvided = errors.New("image not provided")
 
 // make this a bit longer than jwt TTL
 const validSeconds = int64(35 * time.Minute / time.Second)
@@ -73,7 +76,7 @@ func (s svc) createSession(session *structs.Session, img *multipart.FileHeader) 
 
 	tx := db.GetDb().Begin()
 	txRepo := s.getTxRepo(tx)
-	err = txRepo.createOrUpdateSession(session)
+	err = txRepo.createSession(session)
 	if err != nil {
 		log.Err(err).Msg("failed creating or updating session in transaction")
 		tx.Rollback()
@@ -103,7 +106,7 @@ func (s svc) createSession(session *structs.Session, img *multipart.FileHeader) 
 
 func (s svc) updateSession(session *structs.Session, img *multipart.FileHeader) (err error) {
 	thumbnail, err := createThumbnail(img)
-	if err != nil {
+	if err != nil && err != ErrImageNotProvided {
 		log.Err(err).Msg("could not create thumbnail object for database from form")
 		return err
 	}
@@ -114,40 +117,43 @@ func (s svc) updateSession(session *structs.Session, img *multipart.FileHeader) 
 	}
 
 	oldKey := oldSession.Thumbnail.Path
-	thumbnail.ID = oldSession.Thumbnail.ID
-	thumbnail.SessionID = session.ID
-	thumbnail.Path = fmt.Sprintf("%s/%s/%s", s.bucketBasePath, thumbnail.ID, thumbnail.Filename)
 
 	tx := db.GetDb().Begin()
 	txRepo := s.getTxRepo(tx)
-	err = txRepo.createOrUpdateSession(session)
+	err = txRepo.updateSession(session)
 	if err != nil {
 		log.Err(err).Msg("failed creating or updating session in transaction")
 		tx.Rollback()
 		return err
 	}
 
-	err = txRepo.createOrUpdateThumbnail(thumbnail)
-	if err != nil {
-		log.Err(err).Msg("failed creating or updating thumbnail in transaction")
-		tx.Rollback()
-		return err
-	}
-
-	err = s.bucket.UploadFile(context.Background(), config.Get().S3Bucket, *thumbnail)
-	if err != nil {
-		log.Err(err).Msg("failed uploading the image to s3 in transaction")
-		tx.Rollback()
-		return err
-	}
-
-	if oldKey != thumbnail.Path {
-		err = s.bucket.DeleteObjects(context.Background(), config.Get().S3Bucket, []string{oldKey})
+	if thumbnail != nil {
+		thumbnail.ID = oldSession.Thumbnail.ID
+		thumbnail.SessionID = session.ID
+		thumbnail.Path = fmt.Sprintf("%s/%s/%s", s.bucketBasePath, thumbnail.ID, thumbnail.Filename)
+		err = txRepo.createOrUpdateThumbnail(thumbnail)
 		if err != nil {
-			log.Err(err).Msg("failed deleting old image on s3 after update")
+			log.Err(err).Msg("failed creating or updating thumbnail in transaction")
 			tx.Rollback()
 			return err
 		}
+
+		err = s.bucket.UploadFile(context.Background(), config.Get().S3Bucket, *thumbnail)
+		if err != nil {
+			log.Err(err).Msg("failed uploading the image to s3 in transaction")
+			tx.Rollback()
+			return err
+		}
+
+		if oldKey != thumbnail.Path {
+			err = s.bucket.DeleteObjects(context.Background(), config.Get().S3Bucket, []string{oldKey})
+			if err != nil {
+				log.Err(err).Msg("failed deleting old image on s3 after update")
+				tx.Rollback()
+				return err
+			}
+		}
+
 	}
 
 	tx.Commit()
@@ -168,11 +174,17 @@ func (s svc) deleteSession(id string) (err error) {
 	return s.repo.deleteSession(id)
 }
 
-func createThumbnail(img *multipart.FileHeader) (t *structs.Thumbnail, err error) {
+func createThumbnail(img *multipart.FileHeader) (*structs.Thumbnail, error) {
+	if img == nil {
+		return nil, ErrImageNotProvided
+	}
+
 	file, err := img.Open()
 	if err != nil {
 		return nil, err
 	}
+
+	defer file.Close()
 
 	fileBytes, err := io.ReadAll(file)
 	if err != nil {
@@ -189,14 +201,12 @@ func createThumbnail(img *multipart.FileHeader) (t *structs.Thumbnail, err error
 		return nil, err
 	}
 
-	thumbnail := structs.Thumbnail{
+	return &structs.Thumbnail{
 		Filename:     img.Filename,
 		MimeType:     filetype,
 		ExifMetadata: *exifMD,
 		Data:         fileBytes,
-	}
-
-	return &thumbnail, nil
+	}, nil
 }
 
 func (s svc) getTxRepo(tx *gorm.DB) repository {

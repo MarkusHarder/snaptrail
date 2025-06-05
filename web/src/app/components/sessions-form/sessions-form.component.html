@@ -1,4 +1,10 @@
-<p-dialog header="Edit Session" [modal]="true" [(visible)]="visible">
+<p-dialog
+  header="Edit Session"
+  [modal]="true"
+  [(visible)]="visible"
+  [blockScroll]="true"
+  (onHide)="hideDialog()"
+>
   <form [formGroup]="sessionForm" (ngSubmit)="onSubmit()">
     <div class="flex flex-col gap-6 w-full mx-auto space-y-5">
       <div

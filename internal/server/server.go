@@ -69,8 +69,8 @@ func (s *Server) setupRoutes() {
 
 	adminSessionHandler := adminsession.New()
 	protectedRouter.GET(sessionPath, adminSessionHandler.Session)
-	protectedRouter.POST(sessionPath, adminSessionHandler.CreateOrUpdateSession)
-	protectedRouter.POST(sessionPath+"/:id", adminSessionHandler.CreateOrUpdateSession)
+	protectedRouter.POST(sessionPath, adminSessionHandler.CreateSession)
+	protectedRouter.PATCH(sessionPath+"/:id", adminSessionHandler.UpdateSession)
 	protectedRouter.DELETE(sessionPath+"/:id", adminSessionHandler.DeleteSession)
 
 	protectedRouter.POST(userPath, userHandler.PasswordChange)

@@ -18,8 +18,6 @@ describe('ImageCardComponent', () => {
       id: 'abc-123',
       filename: 'image123.jpg',
       mimeType: 'image/jpeg',
-      data: 'base64EncodedImageData',
-      rawData: new Blob(['test image data'], { type: 'image/png' }),
       imageSrc: 'some/image/url/img.png',
       cameraModel: 'Canon EOS 5D Mark IV',
       make: 'Canon',

@@ -1,7 +1,9 @@
-<app-sessions-form
-  [(visible)]="visible"
-  [selectedSession]="selectedSession"
-></app-sessions-form>
+@if (visible) {
+  <app-sessions-form
+    [(visible)]="visible"
+    [selectedSession]="selectedSession"
+  ></app-sessions-form>
+}
 <p-confirmdialog />
 
 @if (!public()) {

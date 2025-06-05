@@ -35,15 +35,7 @@ func (h *Handler) Session(c *gin.Context) {
 	c.JSON(http.StatusOK, session)
 }
 
-func (h *Handler) CreateOrUpdateSession(c *gin.Context) {
-	id := c.Param("id")
-	update := true
-	log.Info().Msgf("creating or updating session, got id: %s, will update: %t", id, update)
-	if id == "" {
-		update = false
-		log.Warn().Msg("failed to parse session id update, creating session instead")
-	}
-
+func (h *Handler) CreateSession(c *gin.Context) {
 	var form sessionForm
 	if err := c.ShouldBind(&form); err != nil {
 		log.Err(err).Msg("failed to parse session from form")
@@ -66,6 +58,49 @@ func (h *Handler) CreateOrUpdateSession(c *gin.Context) {
 	}
 
 	session := structs.Session{
+		Name:        form.SessionName,
+		Subtitle:    form.Subtitle,
+		Date:        sessionDate,
+		Description: form.Description,
+		Published:   form.Published,
+	}
+	if err := h.svc.createSession(&session, uploadedThumbnail); err != nil {
+		log.Err(err).Msg("failed to create or update session")
+		c.String(http.StatusInternalServerError, "failed to create or update session")
+		return
+	}
+
+	c.JSON(http.StatusOK, session)
+}
+
+func (h *Handler) UpdateSession(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		log.Warn().Msg("failed to parse session id update, creating session instead")
+		c.String(http.StatusBadRequest, "failed to parse id")
+
+	}
+
+	var form sessionForm
+	if err := c.ShouldBind(&form); err != nil {
+		log.Err(err).Msg("failed to parse session from form")
+		c.String(http.StatusBadRequest, "failed parse session from form")
+		return
+	}
+
+	uploadedThumbnail, err := c.FormFile("uploadedThumbnail")
+	if err != nil {
+		log.Warn().Err(err).Msg("failed to parse thumbnail from form, only updating session fields")
+	}
+
+	sessionDate, err := time.Parse(time.RFC3339, form.Date)
+	if err != nil {
+		log.Err(err).Msg("failed to parse session date from form")
+		c.String(http.StatusBadRequest, "failed to parse session date from form")
+		return
+	}
+
+	session := structs.Session{
 		ID:          id,
 		Name:        form.SessionName,
 		Subtitle:    form.Subtitle,
@@ -74,19 +109,12 @@ func (h *Handler) CreateOrUpdateSession(c *gin.Context) {
 		Published:   form.Published,
 	}
 	session.ID = id
-	if update {
-		if err := h.svc.updateSession(&session, uploadedThumbnail); err != nil {
-			log.Err(err).Msg("failed to create or update session")
-			c.String(http.StatusInternalServerError, "failed to create or update session")
-			return
-		}
-	} else {
-		if err := h.svc.createSession(&session, uploadedThumbnail); err != nil {
-			log.Err(err).Msg("failed to create or update session")
-			c.String(http.StatusInternalServerError, "failed to create or update session")
-			return
-		}
+	if err := h.svc.updateSession(&session, uploadedThumbnail); err != nil {
+		log.Err(err).Msg("failed to create or update session")
+		c.String(http.StatusInternalServerError, "failed to create or update session")
+		return
 	}
+
 	c.JSON(http.StatusOK, session)
 }
 

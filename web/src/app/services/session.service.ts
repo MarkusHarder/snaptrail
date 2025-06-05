@@ -34,10 +34,13 @@ export class SessionService {
   }
 
   createOrUpdateSession(sessionForm: FormData, id?: string) {
-    let path = this.basePath() + '/admin/sessions';
-    console.log(id);
-    if (id) path += '/' + id;
-    this.http.post<Session>(path, sessionForm).subscribe({
+    const baseUrl = this.basePath() + '/admin/sessions';
+    const url = id ? `${baseUrl}/${id}` : baseUrl;
+    const request$ = id
+      ? this.http.patch<Session>(url, sessionForm)
+      : this.http.post<Session>(url, sessionForm);
+
+    request$.subscribe({
       next: () => this.getSessions(false),
       error: (err) => {
         this.messageService.add({

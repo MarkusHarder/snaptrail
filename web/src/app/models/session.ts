@@ -12,8 +12,6 @@ export interface Thumbnail {
   id?: string;
   filename: string;
   mimeType: string;
-  data: string;
-  rawData: Blob;
   imageSrc: string;
   cameraModel?: string;
   make?: string;
