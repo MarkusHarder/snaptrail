@@ -59,7 +59,7 @@ jobs:
         working-directory: web
 
       - name: Build frontend int
-        if: ${{ (github.event_name == 'push' && github.base_ref == 'dev') || (github.event_name == 'pull_request' && github.head_ref == 'dev') }}
+        if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/dev') || (github.event_name == 'pull_request' && github.head_ref == 'dev') }}
         run: npm run build --configuration=int
         working-directory: web
 

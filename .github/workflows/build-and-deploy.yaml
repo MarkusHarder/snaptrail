@@ -21,7 +21,7 @@ jobs:
           REPO: "${{ github.repository}}"
       - name: Add dev tag
         id: set-int
-        if: ${{ (github.event_name == 'push' && github.base_ref == 'dev') || (github.event_name == 'pull_request' && github.head_ref == 'dev') }}
+        if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/dev') || (github.event_name == 'pull_request' && github.head_ref == 'dev') }}
         run: |
           echo "image_url=ghcr.io/$REPO_LC:${{ github.sha }}" >> "$GITHUB_OUTPUT"
 
