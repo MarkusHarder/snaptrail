@@ -1,5 +1,5 @@
 <p-dialog
-  header="Edit Session"
+  [header]="headerText"
   [modal]="true"
   [(visible)]="visible"
   [blockScroll]="true"
@@ -7,13 +7,10 @@
 >
   <form [formGroup]="sessionForm" (ngSubmit)="onSubmit()">
     <div class="flex flex-col gap-6 w-full mx-auto space-y-5">
-      <div
-        class="flex flex-col justify-center sm:flex-row sm:items-center gap-6"
-      >
+      <div class="flex flex-col justify-center gap-6">
         <p-toast />
         <p-fileupload
           #fu
-          name="demo[]"
           [customUpload]="true"
           (uploadHandler)="onUpload($event)"
           [multiple]="true"
@@ -22,13 +19,11 @@
           [auto]="true"
         >
         </p-fileupload>
-        <div>
-          @if (uploadedFile) {
-            <ul>
-              <li>{{ filename }} - {{ uploadedFile.size }} bytes</li>
-            </ul>
-          }
-        </div>
+        @if (uploadedFile) {
+          <ul class="flex justify-center">
+            <li>{{ filename }} - {{ uploadedFile.size }} bytes</li>
+          </ul>
+        }
       </div>
       <div class="flex flex-col sm:flex-row sm:items-center gap-6">
         <div>
@@ -42,6 +37,13 @@
             class="w-full"
             formControlName="sessionName"
           />
+          <div style="min-height: 2rem">
+            @if (hasError("sessionName", "required")) {
+              <p-message severity="error" variant="simple" size="small"
+                >Session Name required
+              </p-message>
+            }
+          </div>
         </div>
         <div>
           <label for="subtitle" class="block font-semibold mb-2"
@@ -54,6 +56,13 @@
             class="w-full"
             formControlName="subtitle"
           />
+          <div style="min-height: 2rem">
+            @if (hasError("subtitle", "required")) {
+              <p-message severity="error" variant="simple" size="small">
+                Subtitle required
+              </p-message>
+            }
+          </div>
         </div>
       </div>
       <div class="flex flex-col sm:flex-row sm:items-start gap-6">
@@ -65,6 +74,13 @@
             formControlName="date"
             dateFormat="yy-mm-dd"
           />
+          <div style="min-height: 2rem">
+            @if (hasError("date", "required")) {
+              <p-message severity="error" variant="simple" size="small"
+                >Date required
+              </p-message>
+            }
+          </div>
         </div>
         <div class="flex-1">
           <label for="published" class="block font-semibold mb-2"
@@ -89,6 +105,14 @@
           rows="4"
           formControlName="description"
         ></textarea>
+
+        <div style="min-height: 2rem">
+          @if (hasError("description", "required")) {
+            <p-message severity="error" variant="simple" size="small">
+              Description required
+            </p-message>
+          }
+        </div>
       </div>
       <p-button type="submit" [disabled]="!sessionForm.valid">Submit</p-button>
     </div>

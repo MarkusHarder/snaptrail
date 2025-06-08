@@ -25,6 +25,7 @@ import { MessageService } from 'primeng/api';
 import { FileUpload } from 'primeng/fileupload';
 import { ToastModule } from 'primeng/toast';
 import { CommonModule } from '@angular/common';
+import { Message } from 'primeng/message';
 
 @Component({
   selector: 'app-sessions-form',
@@ -39,6 +40,7 @@ import { CommonModule } from '@angular/common';
     Dialog,
     FileUpload,
     ToastModule,
+    Message,
     CommonModule,
   ],
   schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA],
@@ -51,6 +53,8 @@ export class SessionsFormComponent {
   uploadedFile: File | null = null;
   filename = '';
   inputSession?: Session;
+  headerText = '';
+  edit = false;
 
   private formBuilder = inject(FormBuilder);
   sessionForm = this.formBuilder.group({
@@ -67,6 +71,7 @@ export class SessionsFormComponent {
   set selectedSession(session: Session | undefined) {
     this.inputSession = session;
     if (session) {
+      this.headerText = 'Edit Session';
       this.sessionForm.get('uploadedThumbnail')?.clearValidators();
       let d;
       this.filename = this.inputSession?.thumbnail?.filename ?? '';
@@ -80,6 +85,7 @@ export class SessionsFormComponent {
         date: d,
       });
     } else {
+      this.headerText = 'Create Session';
       this.sessionForm.reset();
       this.sessionForm
         .get('uploadedThumbnail')
@@ -133,6 +139,13 @@ export class SessionsFormComponent {
         detail: '',
       });
     }
+  }
+
+  hasError(controlName: string, error: string): boolean {
+    console.log('called has error for: ', controlName);
+    const control = this.sessionForm.get(controlName);
+    console.log(control);
+    return !!(control?.hasError(error) && control?.touched);
   }
 
   hideDialog() {
