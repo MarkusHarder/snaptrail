@@ -47,11 +47,11 @@
   @if (sessions.length > 0) {
     @for (session of sessions; track session.id; let i = $index) {
       <div
-        class="mb-10 lg:mb-0 lg:flex lg:items-center"
-        [ngClass]="i % 2 === 0 ? 'lg:justify-end' : 'lg:justify-start'"
+        class="mb-10 lg:mb-0 lg:flex lg:justify-center lg:items-stretch gap-2"
+        [ngClass]="i % 2 === 0 ? 'lg:flex-row-reverse' : 'lg:flex-row'"
       >
         @if (session.thumbnail) {
-          <div class="lg:w-2/5">
+          <div class="lg:w-3/5">
             <p-card
               styleClass="border border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 rounded"
             >
@@ -67,6 +67,8 @@
         } @else {
           <div>No image available</div>
         }
+        <p-divider layout="vertical"></p-divider>
+        <div class="lg:w-3/5"></div>
       </div>
     }
   } @else {
