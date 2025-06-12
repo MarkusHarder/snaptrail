@@ -26,6 +26,7 @@ import { FileUpload } from 'primeng/fileupload';
 import { ToastModule } from 'primeng/toast';
 import { CommonModule } from '@angular/common';
 import { Message } from 'primeng/message';
+import { filter, Observable, take } from 'rxjs';
 
 @Component({
   selector: 'app-sessions-form',
@@ -55,10 +56,10 @@ export class SessionsFormComponent {
   inputSession?: Session;
   headerText = '';
   edit = false;
+  loading$: Observable<boolean>;
 
   private formBuilder = inject(FormBuilder);
   sessionForm = this.formBuilder.group({
-    id: new FormControl<string>({ value: '', disabled: true }),
     sessionName: new FormControl('', Validators.required),
     subtitle: new FormControl('', Validators.required),
     description: new FormControl('', Validators.required),
@@ -77,13 +78,14 @@ export class SessionsFormComponent {
       this.filename = this.inputSession?.thumbnail?.filename ?? '';
       if (session?.date) d = new Date(session?.date);
       this.sessionForm.patchValue({
-        id: session?.id,
         sessionName: session?.sessionName ?? '',
         subtitle: session?.subtitle ?? '',
         description: session?.description ?? '',
         published: session?.published,
         date: d,
       });
+      console.log(this.sessionForm);
+      console.log(this.inputSession);
     } else {
       this.headerText = 'Create Session';
       this.sessionForm.reset();
@@ -96,15 +98,16 @@ export class SessionsFormComponent {
   constructor(
     private sessionService: SessionService,
     private messageService: MessageService,
-  ) {}
+  ) {
+    this.loading$ = sessionService.loading$;
+  }
 
   onSubmit() {
+    console.log(this.inputSession);
     if (!this.sessionForm.valid) return;
-    this.visible.update(() => false);
     if (this.sessionForm.valid) {
       const formData = new FormData();
       const pubVal = this.sessionForm.value.published ?? false;
-      console.log(pubVal);
       Object.entries(this.sessionForm.getRawValue()).forEach(([key, value]) => {
         if (key === 'uploadedThumbnail' && value instanceof File) {
           formData.append('uploadedThumbnail', value);
@@ -117,11 +120,23 @@ export class SessionsFormComponent {
         }
       });
       formData.append('published', String(pubVal));
+      // setup subscription before executing request
+
+      console.log(this.inputSession?.id);
       this.sessionService.createOrUpdateSession(
         formData,
         this.inputSession?.id,
       );
-      this.inputSession = undefined;
+      this.sessionService.loading$
+        .pipe(
+          filter((loading) => loading === false),
+          take(1),
+        )
+        .subscribe(() => {
+          console.log('closing dialog');
+          this.visible.update(() => false);
+          this.inputSession = undefined;
+        });
     }
   }
 
@@ -142,9 +157,7 @@ export class SessionsFormComponent {
   }
 
   hasError(controlName: string, error: string): boolean {
-    console.log('called has error for: ', controlName);
     const control = this.sessionForm.get(controlName);
-    console.log(control);
     return !!(control?.hasError(error) && control?.touched);
   }
 

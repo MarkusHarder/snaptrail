@@ -114,7 +114,12 @@
           }
         </div>
       </div>
-      <p-button type="submit" [disabled]="!sessionForm.valid">Submit</p-button>
+      <p-button
+        type="submit"
+        [loading]="loading$ | async"
+        [disabled]="!sessionForm.valid"
+        >Submit</p-button
+      >
     </div>
   </form>
 </p-dialog>

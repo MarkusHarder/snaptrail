@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MessageService } from 'primeng/api';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, finalize } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Session } from '../models/session';
 
@@ -11,6 +11,9 @@ import { Session } from '../models/session';
 export class SessionService {
   private sessionsSubject = new BehaviorSubject<Session[]>([]);
   readonly sessions$ = this.sessionsSubject.asObservable();
+  private loadingSubject = new BehaviorSubject<boolean>(false);
+  readonly loading$ = this.loadingSubject.asObservable();
+
   constructor(
     private http: HttpClient,
     private messageService: MessageService,
@@ -20,17 +23,21 @@ export class SessionService {
     let path = this.basePath();
     if (published) path += '/sessions';
     else path += '/admin/sessions';
-    this.http.get<Session[]>(path).subscribe({
-      next: (sessions) => this.sessionsSubject.next(sessions),
-      error: (err) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'There was an error fetching sessions',
-        });
-        console.error('Failed to load sessions:', err);
-      },
-    });
+    this.loadingSubject.next(true);
+    this.http
+      .get<Session[]>(path)
+      .pipe(finalize(() => this.loadingSubject.next(false)))
+      .subscribe({
+        next: (sessions) => this.sessionsSubject.next(sessions),
+        error: (err) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'There was an error fetching sessions',
+          });
+          console.error('Failed to load sessions:', err);
+        },
+      });
   }
 
   createOrUpdateSession(sessionForm: FormData, id?: string) {
@@ -40,7 +47,8 @@ export class SessionService {
       ? this.http.patch<Session>(url, sessionForm)
       : this.http.post<Session>(url, sessionForm);
 
-    request$.subscribe({
+    this.loadingSubject.next(true);
+    request$.pipe(finalize(() => this.loadingSubject.next(true))).subscribe({
       next: () => this.getSessions(false),
       error: (err) => {
         this.messageService.add({
@@ -54,8 +62,10 @@ export class SessionService {
   }
 
   deleteSession(id: string) {
+    this.loadingSubject.next(true);
     this.http
       .delete<void>(this.basePath() + '/admin/sessions/' + id)
+      .pipe(finalize(() => this.loadingSubject.next(false)))
       .subscribe({
         next: () => this.getSessions(false),
         error: (err) => {
