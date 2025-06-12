@@ -103,7 +103,6 @@ export class SessionsFormComponent {
   }
 
   onSubmit() {
-    console.log(this.inputSession);
     if (!this.sessionForm.valid) return;
     if (this.sessionForm.valid) {
       const formData = new FormData();
@@ -120,9 +119,7 @@ export class SessionsFormComponent {
         }
       });
       formData.append('published', String(pubVal));
-      // setup subscription before executing request
 
-      console.log(this.inputSession?.id);
       this.sessionService.createOrUpdateSession(
         formData,
         this.inputSession?.id,
